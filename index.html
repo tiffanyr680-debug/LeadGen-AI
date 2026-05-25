@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadGen AI | Automated Prospecting Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #020617; color: #f8fafc; }
+        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .btn-main { background: #6366f1; color: white; font-weight: 800; transition: 0.3s; }
+        .btn-main:hover { background: #818cf8; transform: scale(1.05); box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body x-data="app()" x-init="init()">
+
+    <!-- LANDING PAGE VIEW -->
+    <div x-show="mode === 'landing'" class="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-slate-950">
+        <div class="mb-8 h-16 w-16 bg-indigo-500 rounded-3xl flex items-center justify-center text-white font-black text-2xl shadow-2xl">L</div>
+        <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter text-white">Find leads <span class="text-indigo-500">instantly.</span></h1>
+        <p class="text-slate-500 text-xl md:text-2xl max-w-2xl mb-12">The world's first AI-powered prospect engine for agencies. Find businesses, save to CRM, and draft cold outreach in 60 seconds.</p>
+        
+        <div class="flex flex-col md:flex-row gap-4 mb-20">
+            <!-- YOUR $500/MO STRIPE LINK IS NOW LIVE BELOW -->
+            <a href="https://buy.stripe.com/test_3cI00icxp5512YO2190Fi0a" target="_blank" class="btn-main px-12 py-5 rounded-2xl font-black text-xl">Start Pro Plan — $500/mo</a>
+            <button @click="mode = 'app'" class="bg-white/5 border border-white/10 px-12 py-5 rounded-2xl font-bold text-xl hover:bg-white/10 transition-all">Try Lead Search Demo</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full text-left">
+            <div class="p-8 glass rounded-3xl">
+                <div class="text-indigo-400 font-bold mb-2 uppercase text-xs">01. Discovery</div>
+                <h3 class="text-xl font-bold mb-4 text-white">Google Maps Scraper</h3>
+                <p class="text-slate-500 text-sm">Target any niche in any city. Get verified business data instantly.</p>
+            </div>
+            <div class="p-8 glass rounded-3xl">
+                <div class="text-indigo-400 font-bold mb-2 uppercase text-xs">02. Outreach</div>
+                <h3 class="text-xl font-bold mb-4 text-white">AI Personalization</h3>
+                <p class="text-slate-500 text-sm">No more boring emails. Our AI drafts messages that actually get replies.</p>
+            </div>
+            <div class="p-8 glass rounded-3xl">
+                <div class="text-indigo-400 font-bold mb-2 uppercase text-xs">03. Management</div>
+                <h3 class="text-xl font-bold mb-4 text-white">Built-in CRM</h3>
+                <p class="text-slate-500 text-sm">Store leads locally. Never pay for a seat-based CRM again.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div x-show="mode === 'app'" x-cloak class="flex h-screen bg-[#020617]">
+        <!-- Sidebar -->
+        <aside class="w-64 border-r border-white/5 p-6 flex flex-col">
+            <div class="text-xl font-black text-white mb-10 cursor-pointer" @click="mode = 'landing'">LeadGen AI</div>
+            <nav class="flex-1 space-y-1">
+                <button @click="view = 'find'" :class="view === 'find' ? 'bg-indigo-500 text-white' : 'text-slate-500'" class="w-full text-left p-3 rounded-xl font-bold text-sm">🔍 Find Prospects</button>
+                <button @click="view = 'crm'" :class="view === 'crm' ? 'bg-indigo-500 text-white' : 'text-slate-500'" class="w-full text-left p-3 rounded-xl font-bold text-sm">👥 Your CRM</button>
+            </nav>
+            <div class="mt-auto pt-6 border-t border-white/5">
+                <div class="flex flex-col gap-2">
+                    <a href="privacy.html" class="text-[10px] font-bold text-slate-600 hover:text-white">PRIVACY POLICY</a>
+                    <a href="terms.html" class="text-[10px] font-bold text-slate-600 hover:text-white">TERMS OF SERVICE</a>
+                    <a href="guide.html" class="text-[10px] font-bold text-slate-600 hover:text-white">USER GUIDE</a>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 p-10 overflow-y-auto">
+            <div x-show="view === 'find'">
+                <h2 class="text-3xl font-black mb-8 text-white">Prospect Discovery</h2>
+                <div class="flex gap-4 mb-10">
+                    <input x-model="niche" placeholder="Niche (e.g. Roofers)" class="flex-1 bg-slate-900 border border-white/10 p-4 rounded-xl outline-none text-white">
+                    <button @click="results = [{name: niche + ' Pros', city: 'Miami', status: 'Active'}]" class="btn-main px-8 rounded-xl font-bold">Search</button>
+                </div>
+                <div class="glass p-6 rounded-2xl">
+                    <template x-for="res in results">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-white" x-text="res.name"></p>
+                                <p class="text-xs text-slate-500" x-text="res.city"></p>
+                            </div>
+                            <button @click="alert('Saved to CRM!')" class="bg-indigo-500/20 text-indigo-400 font-bold px-4 py-2 rounded-lg text-xs">Save Lead</button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            
+            <div x-show="view === 'crm'">
+                <h2 class="text-3xl font-black mb-8 text-white">Local Lead CRM</h2>
+                <p class="text-slate-500 italic">Your saved leads appear here. Connect to cloud for multi-device sync.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function app() {
+            return {
+                mode: 'landing',
+                view: 'find',
+                niche: '',
+                results: [],
+                init() { console.log('LeadGen Engine Ready'); }
+            }
+        }
+    </script>
+</body>
+</html>
