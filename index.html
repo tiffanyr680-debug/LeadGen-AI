@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadGen AI | Automated Prospecting Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: #f8fafc; }
+        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .btn-main { background: #6366f1; color: white; font-weight: 800; transition: 0.3s; }
+        .btn-main:hover { background: #818cf8; transform: scale(1.05); }
+        .blur-text { filter: blur(6px); opacity: 0.4; user-select: none; }
+        [x-cloak] { display: none !important; }
+        @keyframes pulse-radar { 0% { transform: scale(0.95); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
+        .radar { position: relative; }
+        .radar:after { content: ''; position: absolute; inset: -10px; border: 2px solid #6366f1; border-radius: 50%; animation: pulse-radar 2s infinite; }
+    </style>
+</head>
+<body x-data="app()" x-init="init()">
+
+    <!-- LANDING PAGE -->
+    <div x-show="mode === 'landing'" class="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-[#020617]">
+        <h1 class="text-7xl md:text-8xl font-black mb-6 tracking-tighter text-white">Find leads <span class="text-indigo-400 font-extrabold italic">instantly.</span></h1>
+        <p class="text-slate-400 text-xl max-w-2xl mb-12">The world's first AI-powered prospect engine. Find businesses, unlock direct contact info, and close deals.</p>
+        <button @click="mode = 'app'" class="btn-main px-12 py-5 rounded-2xl font-black text-xl shadow-2xl">Start Live Demo</button>
+    </div>
+
+    <!-- APP DASHBOARD -->
+    <div x-show="mode === 'app'" x-cloak class="flex h-screen bg-[#020617]">
+        <aside class="w-72 border-r border-white/5 p-8 flex flex-col">
+            <div class="text-2xl font-black text-white mb-12 cursor-pointer" @click="mode = 'landing'">LeadGen AI</div>
+            <nav class="flex-1 space-y-3">
+                <div class="bg-indigo-500/10 text-indigo-400 p-4 rounded-2xl font-bold italic">📡 Satellite Radar</div>
+                <div class="text-slate-600 p-4 rounded-2xl font-bold flex justify-between items-center opacity-50 italic">CRM <span class="bg-slate-800 px-2 py-0.5 rounded text-[8px]">LOCKED</span></div>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-12 overflow-y-auto">
+            <h2 class="text-4xl font-black mb-10 tracking-tight">Discovery Engine</h2>
+
+            <div class="flex flex-col md:flex-row gap-4 mb-12">
+                <input x-model="search.niche" placeholder="Industry?" class="flex-1 bg-slate-900 border border-white/10 p-5 rounded-2xl outline-none text-white focus:border-indigo-500 uppercase">
+                <input x-model="search.city" placeholder="City?" class="flex-1 bg-slate-900 border border-white/10 p-5 rounded-2xl outline-none text-white focus:border-indigo-500 uppercase">
+                <button @click="runScan()" :disabled="scanning" class="btn-main px-12 py-5 rounded-2xl font-black shadow-2xl transition-all">
+                    <span x-text="scanning ? 'SCANNING AREA...' : 'START SCAN'"></span>
+                </button>
+            </div>
+
+            <!-- SCANNING ANIMATION -->
+            <div x-show="scanning" class="glass p-12 rounded-[3rem] text-center mb-10 border-indigo-500/30">
+                <div class="radar w-20 h-20 bg-indigo-500 rounded-full mx-auto mb-8 flex items-center justify-center text-3xl font-bold">🛰️</div>
+                <h3 class="text-2xl font-bold mb-2 uppercase tracking-tight text-white">Analyzing <span class="text-indigo-400" x-text="search.niche"></span> in <span class="text-indigo-400" x-text="search.city"></span></h3>
+                <div class="text-[10px] font-mono text-slate-500 h-12 overflow-hidden italic" id="scan-log"></div>
+            </div>
+
+            <!-- RESULTS LIST -->
+            <div x-show="results.length" class="space-y-6">
+                <template x-for="(res, index) in results">
+                    <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:bg-white/10 transition-all shadow-lg">
+                        <div class="flex-1 text-left">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span :class="index === 0 ? 'bg-emerald-500 text-black' : 'bg-indigo-500/20 text-indigo-400'" class="text-[8px] font-black px-2 py-1 rounded uppercase" x-text="index === 0 ? 'FREE SAMPLE UNLOCKED' : 'VERIFIED ENTITY'"></span>
+                                <h4 class="text-2xl font-bold capitalize text-white" x-text="res.name"></h4>
+                            </div>
+                            <p class="text-slate-500 text-sm mb-6 capitalize" x-text="res.address"></p>
+                            <div class="flex gap-12">
+                                <div>
+                                    <span class="text-[10px] font-black text-slate-600 block uppercase mb-2 tracking-widest">Decision Maker</span> 
+                                    <span :class="index > 0 ? 'blur-text' : ''" class="text-indigo-400 font-bold" x-text="res.email"></span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-black text-slate-600 block uppercase mb-2 tracking-widest">Direct Line</span> 
+                                    <span :class="index > 0 ? 'blur-text' : ''" class="text-emerald-400 font-bold" x-text="res.phone"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-auto">
+                            <button @click="index === 0 ? alert('Copying Lead to Clipboard...') : alert('Upgrade to Pro to unlock remaining leads!')" :class="index === 0 ? 'bg-emerald-500 text-black' : 'bg-indigo-500 text-white'" class="w-full font-black px-10 py-5 rounded-2xl shadow-xl hover:scale-105 transition-all uppercase text-xs tracking-widest">
+                                <span x-text="index === 0 ? 'COPY LEAD' : 'UNLOCK REMAINING'"></span>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function app() {
+            return {
+                mode: 'landing',
+                scanning: false,
+                search: { niche: '', city: '' },
+                results: [],
+                init() { console.log('Free Sample Logic Ready'); },
+                runScan() {
+                    if(!this.search.niche || !this.search.city) return alert('Please enter both Niche and City');
+                    this.scanning = true;
+                    this.results = [];
+                    const city = this.search.city;
+                    const log = document.getElementById('scan-log');
+                    const msgs = [`Bypassing firewalls in ${city}...`, `Locating company owners...`, `Validating business registrations...`, `Extraction complete.`];
+                    
+                    let i = 0;
+                    const interval = setInterval(() => { log.innerText = msgs[i % msgs.length]; i++; }, 700);
+
+                    setTimeout(() => {
+                        clearInterval(interval);
+                        this.scanning = false;
+                        this.results = [
+                            { name: "Main Street " + this.search.niche, address: "101 High St, " + city, email: "j.doe@mainst.com", phone: "+1 555-123-4567" },
+                            { name: "Elite " + this.search.niche + " Group", address: "400 Business Ave, " + city, email: "hidden@locked.com", phone: "+1 555-000-0000" },
+                            { name: "The " + this.search.niche + " Experts", address: "220 Park Rd, " + city, email: "hidden@locked.com", phone: "+1 555-000-0000" }
+                        ];
+                    }, 3000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
